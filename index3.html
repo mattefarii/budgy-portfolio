@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Budgy Dashboard</title>
+<style>
+  :root {
+    --primary: #6c5ce7;
+    --primary-dark: #5649c0;
+    --primary-light: #a29bfe;
+    --secondary: #00b894;
+    --danger: #d63031;
+    --warning: #fdcb6e;
+    --text: #2d3436;
+    --text-light: #636e72;
+    --background: #f8f9fa;
+    --card-bg: #ffffff;
+    --border-radius: 12px;
+    --box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  
+  html, body {
+    height: 100%;
+    margin: 0; padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: var(--background);
+    color: var(--text);
+  }
+  
+  #app {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+  
+  nav {
+    width: 240px;
+    background: var(--card-bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 0;
+    box-sizing: border-box;
+    border-right: 1px solid rgba(0,0,0,0.05);
+  }
+  
+  .logo {
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--primary);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    margin-right: 0.75rem;
+  }
+  
+  .logo-text {
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--primary);
+  }
+  
+  nav button {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 0.95rem;
+    padding: 0.75rem 1.5rem;
+    text-align: left;
+    cursor: pointer;
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    margin: 0.25rem 0;
+  }
+  
+  nav button:hover, nav button.active {
+    background: rgba(108, 92, 231, 0.08);
+    color: var(--primary);
+    border-left: 4px solid var(--primary);
+  }
+  
+  nav button i {
+    margin-right: 0.75rem;
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+  }
+  
+  main {
+    flex-grow: 1;
+    padding: 1.5rem 2rem;
+    box-sizing: border-box;
+    overflow-y: auto;
+    background: var(--background);
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  /* Card styling */
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--box-shadow);
+  }
+  
+  /* Balance card */
+  .balance-card {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 20px rgba(108, 92, 231, 0.3);
+  }
+  
+  .balance-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+  }
+  
+  .balance-amount {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 0;
+  }
+  
+  .balance-details {
+    display: flex;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .balance-detail {
+    margin-right: 1.5rem;
+    display: flex;
+    align-items: center;
+  }
+  
+  .balance-detail i {
+    margin-right: 0.5rem;
+    font-size: 1rem;
+  }
+  
+  /* Form elements */
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-light);
+  }
+  
+  input, select, textarea {
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius);
+    margin-bottom: 0.25rem;
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+    transition: border 0.2s ease;
+    font-family: inherit;
+  }
+  
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+  }
+  
+  .btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .btn i {
+    margin-right: 0.5rem;
+  }
+  
+  .btn:hover {
+    background: var(--primary-dark);
+  }
+  
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+  }
+  
+  .btn-outline:hover {
+    background: rgba(108, 92, 231, 0.08);
+  }
+  
+  .btn-secondary {
+    background: var(--secondary);
+  }
+  
+  .btn-secondary:hover {
+    background: #00a884;
+  }
+  
+  /* Table styling */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+  }
+  
+  th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  tr:hover {
+    background: rgba(108, 92, 231, 0.03);
+  }
+  
+  /* Status badges */
+  .badge {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  
+  .badge-success {
+    background: rgba(0, 184, 148, 0.1);
+    color: var(--secondary);
+  }
+  
+  .badge-warning {
+    background: rgba(253, 203, 110, 0.1);
+    color: #e17055;
+  }
+  
+  /* Error messages */
+  .error {
+    color: var(--danger);
+    font-weight: 500;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Success messages */
+  .success {
+    color: var(--secondary);
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+  
+  /* Dashboard tips box */
+  .tips-card {
+    background: rgba(108, 92, 231, 0.05);
+    border: 1px solid rgba(108, 92, 231, 0.2);
+    border-radius: var(--border-radius);
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+    max-width: 400px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  
+  .tips-card h4 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+  }
+  
+  .tips-card h4 i {
+    margin-right: 0.5rem;
+  }
+  
+  .tips-card ul {
+    padding-left: 1.25rem;
+    margin: 0;
+  }
+  
+  .tips-card li {
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Chart container */
+  .chart-container {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--box-shadow);
+    height: 350px;
+    position: relative;
+  }
+  
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .chart-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-light);
+    margin: 0;
+  }
+  
+  /* Plans styling */
+  .plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .plan-card {
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    cursor: pointer;
+    background: var(--card-bg);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .plan-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  }
+  
+  .plan-card.selected {
+    border-color: var(--primary);
+    background: rgba(108, 92, 231, 0.03);
+  }
+  
+  .plan-card.selected::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--primary);
+  }
+  
+  .plan-card h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+  }
+  
+  .plan-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--primary);
+  }
+  
+  .plan-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+  }
+  
+  .plan-features li {
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: flex-start;
+  }
+  
+  .plan-features li i {
+    color: var(--secondary);
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+    margin-top: 0.2rem;
+  }
+  
+  /* Plan details */
+  .plan-details {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--box-shadow);
+  }
+  
+  /* Request card form */
+  .form-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--box-shadow);
+    max-width: 500px;
+  }
+  
+  /* Map embed */
+  .map-container {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--box-shadow);
+  }
+  
+  #mapEmbed {
+    width: 100%;
+    height: 300px;
+    border-radius: var(--border-radius);
+    border: none;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    #app {
+      flex-direction: column;
+    }
+    
+    nav {
+      width: 100%;
+      flex-direction: row;
+      overflow-x: auto;
+      padding: 0.75rem;
+      border-right: none;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .logo {
+      display: none;
+    }
+    
+    nav button {
+      flex: 0 0 auto;
+      padding: 0.5rem 1rem;
+      border-left: none;
+      border-bottom: 3px solid transparent;
+      margin: 0 0.25rem;
+      white-space: nowrap;
+    }
+    
+    nav button:hover, nav button.active {
+      border-bottom: 3px solid var(--primary);
+      border-left: none;
+    }
+    
+    main {
+      padding: 1rem;
+    }
+    
+    .plans-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .chart-container {
+      height: 280px;
+    }
+  }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body>
+  <div id="app">
+    <nav>
+      <div class="logo">
+        <div class="logo-icon">B</div>
+        <div class="logo-text">Budgy</div>
+      </div>
+      <button id="navDashboard" class="active">
+        <i class="fas fa-home"></i> Dashboard
+      </button>
+      <button id="navSend">
+        <i class="fas fa-paper-plane"></i> Invia Soldi
+      </button>
+      <button id="navInvestments">
+        <i class="fas fa-chart-line"></i> Investimenti
+      </button>
+      <button id="navPlans">
+        <i class="fas fa-gem"></i> Piani
+      </button>
+      <button id="navRequestCard">
+        <i class="fas fa-credit-card"></i> Richiedi Carta
+      </button>
+    </nav>
+    <main>
+      <section id="sectionDashboard">
+        <div class="header">
+          <h2>Dashboard</h2>
+          <div>
+            <span id="currentDate" style="color: var(--text-light); font-size: 0.9rem;"></span>
+          </div>
+        </div>
+        
+        <div class="balance-card">
+          <div class="balance-label">Saldo disponibile</div>
+          <div class="balance-amount">€<span id="balance">0.00</span></div>
+          <div class="balance-details">
+            <div class="balance-detail">
+              <i class="fas fa-user"></i>
+              <span id="userName"></span>
+            </div>
+            <div class="balance-detail">
+              <i class="fas fa-shield-alt"></i>
+              <span>Protezione attiva</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <div class="chart-header">
+            <h3 class="chart-title">Andamento del portafoglio</h3>
+            <div>
+              <select style="border: none; background: transparent; font-size: 0.9rem; color: var(--text-light);">
+                <option>Ultimi 12 mesi</option>
+                <option>Ultimi 6 mesi</option>
+                <option>Ultimi 3 mesi</option>
+              </select>
+            </div>
+          </div>
+          <canvas id="chartPortfolio"></canvas>
+        </div>
+        
+        <div class="tips-card">
+          <h4><i class="fas fa-lightbulb"></i> Consigli per i tuoi investimenti</h4>
+          <ul>
+            <li>Diversifica sempre il tuo portafoglio per ridurre il rischio.</li>
+            <li>Monitora regolarmente l'andamento del mercato.</li>
+            <li>Considera investimenti a lungo termine per maggiore stabilità.</li>
+            <li>Non investire mai più di quanto puoi permetterti di perdere.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="sectionSend" class="hidden">
+        <div class="header">
+          <h2>Invia Soldi</h2>
+        </div>
+        
+        <div class="form-card">
+          <div class="form-group">
+            <label for="selectUser">Destinatario</label>
+            <select id="selectUser"></select>
+          </div>
+          
+          <div class="form-group">
+            <label for="inputAmount">Importo (€)</label>
+            <input type="number" id="inputAmount" min="0" step="0.01" placeholder="0.00" />
+          </div>
+          
+          <div id="sendError" class="error hidden"></div>
+          <div id="sendSuccess" class="success hidden"></div>
+          
+          <button class="btn" id="btnSend">
+            <i class="fas fa-paper-plane"></i> Invia denaro
+          </button>
+        </div>
+        
+        <div class="card">
+          <h3>Ultime transazioni</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Destinatario</th>
+                <th>Importo</th>
+                <th>Stato</th>
+              </tr>
+            </thead>
+            <tbody id="transactionsTable">
+              </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="sectionInvestments" class="hidden">
+        <div class="header">
+          <h2>I Tuoi Investimenti</h2>
+          <button class="btn btn-outline" id="btnUpdateInvestments">
+            <i class="fas fa-sync-alt"></i> Aggiorna
+          </button>
+        </div>
+        
+        <div class="card">
+          <table>
+            <thead>
+              <tr>
+                <th>Asset</th>
+                <th>Quantità</th>
+                <th>Prezzo (€)</th>
+                <th>Valore (€)</th>
+                <th>Variazione</th>
+              </tr>
+            </thead>
+            <tbody id="investmentsTable"></tbody>
+          </table>
+        </div>
+        
+        <div class="chart-container">
+          <div class="chart-header">
+            <h3 class="chart-title">Distribuzione del portafoglio</h3>
+          </div>
+          <canvas id="chartPie"></canvas>
+        </div>
+      </section>
+
+      <section id="sectionPlans" class="hidden">
+        <div class="header">
+          <h2>Scegli il tuo Piano</h2>
+        </div>
+        
+        <div class="plans-grid" id="plansContainer"></div>
+        
+        <div class="plan-details" id="planDetailsContainer">
+          <h3>Confronto tra piani</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Caratteristica</th>
+                <th>Free</th>
+                <th>Pro</th>
+                <th>Premium</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Costo mensile</td>
+                <td>€0</td>
+                <td>€9.99</td>
+                <td>€29.99</td>
+              </tr>
+              <tr>
+                <td>Limite transazioni</td>
+                <td>€1.000/mese</td>
+                <td>€10.000/mese</td>
+                <td>Illimitato</td>
+              </tr>
+              <tr>
+                <td>Supporto</td>
+                <td>Base</td>
+                <td>Prioritario</td>
+                <td>24/7</td>
+              </tr>
+              <tr>
+                <td>Carte incluse</td>
+                <td>Virtuale (1)</td>
+                <td>Virtuali (3)</td>
+                <td>Virtuali (5) + Fisica</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="sectionRequestCard" class="hidden">
+        <div class="header">
+          <h2>Richiedi la Carta Fisica</h2>
+        </div>
+        
+        <div class="form-card">
+          <form id="requestCardForm">
+            <div class="form-group">
+              <label for="fullName">Nome e Cognome</label>
+              <input type="text" id="fullName" required placeholder="Mario Rossi" />
+            </div>
+            
+            <div class="form-group">
+              <label for="address">Indirizzo</label>
+              <input type="text" id="address" required placeholder="Via Roma 123" />
+            </div>
+            
+            <div class="form-group">
+              <label for="city">Città</label>
+              <input type="text" id="city" required placeholder="Milano" />
+            </div>
+            
+            <div class="form-group">
+              <label for="postalCode">CAP</label>
+              <input type="text" id="postalCode" required placeholder="20100" />
+            </div>
+            
+            <div id="requestError" class="error hidden"></div>
+            <div id="requestSuccess" class="success hidden"></div>
+            
+            <button class="btn" type="submit">
+              <i class="fas fa-credit-card"></i> Invia Richiesta
+            </button>
+          </form>
+        </div>
+        
+        <div class="map-container">
+          <h3>Sede Aziendale</h3>
+          <p>Via Monte Napoleone, 23 - 20121 Milano</p>
+          <iframe
+            id="mapEmbed"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2796.883108620894!2d9.191993415777174!3d45.4674728791007!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4786c67317789a7f%3A0xc02324905d51e70!2sVia%20Monte%20Napoleone%2C%2023%2C%2020121%20Milano%20MI!5e0!3m2!1sit!2sit!4v1678280628374!5m2!1sit!2sit"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            aria-label="Mappa sede aziendale"
+          ></iframe>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Fake data & initial state
+    const users = [
+      { username: 'alice', saldo: 2000, transactions: [
+        { date: '2023-05-10', recipient: 'bob', amount: 50 },
+        { date: '2023-04-28', recipient: 'carla', amount: 120 }
+      ]},
+      { username: 'bob', saldo: 1500, transactions: [
+        { date: '2023-05-05', recipient: 'alice', amount: 30 }
+      ]},
+      { username: 'carla', saldo: 3000, transactions: []}
+    ];
+    let currentUser = users[0]; // alice logged in
+
+    let investments = [
+      { name: 'Tesla', symbol: 'TSLA', quantity: 10, price: 750, change: 2.5, color: '#e63946' },
+      { name: 'Bitcoin', symbol: 'BTC', quantity: 0.5, price: 32000, change: -1.2, color: '#f4a261' },
+      { name: 'Amazon', symbol: 'AMZN', quantity: 5, price: 3300, change: 0.8, color: '#2a9d8f' },
+      { name: 'Apple', symbol: 'AAPL', quantity: 8, price: 170, change: 1.5, color: '#457b9d' }
+    ];
+
+    const plans = [
+      { id: 'free', label: 'Free', price: '€0', features: [
+        "Nessun costo mensile",
+        "Limite di 1.000€ al mese",
+        "Supporto base",
+        "1 carta virtuale"
+      ]},
+      { id: 'pro', label: 'Pro', price: '€9.99/mese', features: [
+        "Limite di 10.000€ al mese",
+        "Supporto prioritario",
+        "3 carte virtuali",
+        "Cashback 1%"
+      ]},
+      { id: 'premium', label: 'Premium', price: '€29.99/mese', features: [
+        "Limite illimitato",
+        "Supporto 24/7",
+        "5 carte virtuali + 1 fisica",
+        "Cashback 2%",
+        "Accesso a investimenti esclusivi"
+      ]}
+    ];
+    let currentPlan = 'free';
+
+    // DOM elements
+    const navDashboard = document.getElementById('navDashboard');
+    const navSend = document.getElementById('navSend');
+    const navInvestments = document.getElementById('navInvestments');
+    const navPlans = document.getElementById('navPlans');
+    const navRequestCard = document.getElementById('navRequestCard');
+
+    const sectionDashboard = document.getElementById('sectionDashboard');
+    const sectionSend = document.getElementById('sectionSend');
+    const sectionInvestments = document.getElementById('sectionInvestments');
+    const sectionPlans = document.getElementById('sectionPlans');
+    const sectionRequestCard = document.getElementById('sectionRequestCard');
+
+    const currentDate = document.getElementById('currentDate');
+    const userNameSpan = document.getElementById('userName');
+    const balanceSpan = document.getElementById('balance');
+    const selectUser = document.getElementById('selectUser');
+    const inputAmount = document.getElementById('inputAmount');
+    const btnSend = document.getElementById('btnSend');
+    const sendError = document.getElementById('sendError');
+    const sendSuccess = document.getElementById('sendSuccess');
+    const transactionsTable = document.getElementById('transactionsTable');
+
+    const investmentsTable = document.getElementById('investmentsTable');
+    const btnUpdateInvestments = document.getElementById('btnUpdateInvestments');
+
+    const plansContainer = document.getElementById('plansContainer');
+    const planDetailsContainer = document.getElementById('planDetailsContainer');
+
+    const requestCardForm = document.getElementById('requestCardForm');
+    const requestSuccess = document.getElementById('requestSuccess');
+    const requestError = document.getElementById('requestError');
+
+    const ctx = document.getElementById('chartPortfolio').getContext('2d');
+    const ctxPie = document.getElementById('chartPie').getContext('2d');
+    let portfolioChart, pieChart;
+
+    // Helper: capitalize first letter
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    // Format date
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    // Update current date
+    function updateCurrentDate() {
+      const now = new Date();
+      const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+      currentDate.textContent = now.toLocaleDateString('it-IT', options);
+    }
+
+    // Update user info on UI
+    function updateUserInfo() {
+      userNameSpan.textContent = capitalize(currentUser.username);
+      balanceSpan.textContent = currentUser.saldo.toFixed(2);
+      renderTransactions();
+    }
+
+    // Render users in select (excl currentUser)
+    function renderUserOptions() {
+      selectUser.innerHTML = '';
+      users.forEach(u => {
+        if (u.username !== currentUser.username) {
+          const opt = document.createElement('option');
+          opt.value = u.username;
+          opt.textContent = capitalize(u.username) + ` (€${u.saldo.toFixed(2)})`;
+          selectUser.appendChild(opt);
+        }
+      });
+    }
+
+    // Render transactions
+    function renderTransactions() {
+      transactionsTable.innerHTML = '';
+      currentUser.transactions.forEach(t => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${formatDate(t.date)}</td>
+          <td>${capitalize(t.recipient)}</td>
+          <td>€${t.amount.toFixed(2)}</td>
+          <td><span class="badge badge-success">Completato</span></td>
+        `;
+        transactionsTable.appendChild(row);
+      });
+    }
+
+    // Send money function
+    function sendMoney() {
+      const amount = parseFloat(inputAmount.value);
+      const recipientName = selectUser.value;
+      sendError.classList.add('hidden');
+      sendSuccess.classList.add('hidden');
+
+      if (isNaN(amount) || amount <= 0) {
+        sendError.textContent = "Inserisci un importo valido.";
+        sendError.classList.remove('hidden');
+        return;
+      }
+      if (amount > currentUser.saldo) {
+        sendError.textContent = "Saldo insufficiente.";
+        sendError.classList.remove('hidden');
+        return;
+      }
+      if (!recipientName) {
+        sendError.textContent = "Seleziona un destinatario.";
+        sendError.classList.remove('hidden');
+        return;
+      }
+
+      const recipient = users.find(u => u.username === recipientName);
+      if (!recipient) {
+        sendError.textContent = "Destinatario non trovato.";
+        sendError.classList.remove('hidden');
+        return;
+      }
+
+      // Transfer money
+      currentUser.saldo -= amount;
+      recipient.saldo += amount;
+      
+      // Add transaction
+      const today = new Date().toISOString().split('T')[0];
+      currentUser.transactions.unshift({
+        date: today,
+        recipient: recipientName,
+        amount: amount
+      });
+
+      updateUserInfo();
+      renderUserOptions();
+      inputAmount.value = '';
+      
+      sendSuccess.textContent = `Hai inviato €${amount.toFixed(2)} a ${capitalize(recipientName)}!`;
+      sendSuccess.classList.remove('hidden');
+    }
+
+    // Render investments table
+    function renderInvestments() {
+      investmentsTable.innerHTML = '';
+      investments.forEach(inv => {
+        const row = document.createElement('tr');
+        const value = inv.quantity * inv.price;
+        const changeClass = inv.change >= 0 ? 'badge-success' : 'badge-warning';
+        const changeIcon = inv.change >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+        
+        row.innerHTML = `
+          <td>
+            <strong>${inv.name}</strong><br>
+            <span style="color: var(--text-light); font-size: 0.85rem;">${inv.symbol}</span>
+          </td>
+          <td>${inv.quantity}</td>
+          <td>€${inv.price.toFixed(2)}</td>
+          <td>€${value.toFixed(2)}</td>
+          <td>
+            <span class="badge ${changeClass}">
+              <i class="fas ${changeIcon}"></i> ${Math.abs(inv.change)}%
+            </span>
+          </td>
+        `;
+        investmentsTable.appendChild(row);
+      });
+      
+      updatePieChart();
+    }
+
+    // Update investments prices randomly
+    function updateInvestmentsValues() {
+      investments = investments.map(inv => {
+        let delta = inv.price * (Math.random() * 0.1 - 0.05);
+        let newPrice = inv.price + delta;
+        let change = (delta / inv.price * 100).toFixed(1);
+        return {...inv, price: Math.max(newPrice, 0.1), change: parseFloat(change)};
+      });
+      renderInvestments();
+
+      // Update portfolio chart data
+      let totalValue = investments.reduce((acc, i) => acc + i.quantity * i.price, 0);
+      portfolioData.datasets[0].data.push(totalValue);
+      portfolioData.labels.push(new Date().toLocaleDateString('it-IT', { month: 'short' }));
+      if (portfolioData.datasets[0].data.length > 12) {
+        portfolioData.datasets[0].data.shift();
+        portfolioData.labels.shift();
+      }
+      portfolioChart.data = portfolioData;
+      portfolioChart.update();
+    }
+
+    // Chart.js data and options
+    const portfolioData = {
+      labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'],
+      datasets: [{
+        label: 'Valore Portafoglio (€)',
+        data: [10000, 10200, 10500, 10300, 10700, 10800, 11000, 10900, 11200, 11500, 11300, 11800],
+        borderColor: 'var(--primary)',
+        backgroundColor: 'rgba(108, 92, 231, 0.2)',
+        fill: true,
+        tension: 0.3
+      }]
+    };
+
+    const portfolioOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            display: false
+          }
+        },
+        y: {
+          beginAtZero: false,
+          grid: {
+            color: '#f0f0f0'
+          }
+        }
+      }
+    };
+
+    function initPortfolioChart() {
+      portfolioChart = new Chart(ctx, {
+        type: 'line',
+        data: portfolioData,
+        options: portfolioOptions
+      });
+    }
+
+    function initPieChart(labels, data, colors) {
+      pieChart = new Chart(ctxPie, {
+        type: 'pie',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: colors,
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: {
+                boxWidth: 15,
+                padding: 15
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  let label = context.label || '';
+                  if (label) {
+                    label += ': ';
+                  }
+                  if (context.parsed !== null) {
+                    label += new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(context.parsed);
+                  }
+                  return label;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Update pie chart
+    function updatePieChart() {
+      const labels = investments.map(i => i.name);
+      const data = investments.map(i => i.quantity * i.price);
+      const backgroundColors = investments.map(i => i.color);
+      
+      if (pieChart) {
+        pieChart.data.labels = labels;
+        pieChart.data.datasets[0].data = data;
+        pieChart.data.datasets[0].backgroundColor = backgroundColors;
+        pieChart.update();
+      } else {
+        initPieChart(labels, data, backgroundColors);
+      }
+    }
+
+    // Render plans grid + details
+    function renderPlans() {
+      plansContainer.innerHTML = '';
+      plans.forEach(plan => {
+        const card = document.createElement('div');
+        card.className = 'plan-card' + (plan.id === currentPlan ? ' selected' : '');
+        card.dataset.planId = plan.id;
+        card.tabIndex = 0;
+        
+        card.innerHTML = `
+          <h3>${plan.label}</h3>
+          <div class="plan-price">${plan.price}</div>
+          <ul class="plan-features">
+            ${plan.features.map(f => `<li><i class="fas fa-check"></i>${f}</li>`).join('')}
+          </ul>
+          <button class="btn ${plan.id === currentPlan ? 'btn-secondary' : ''}" style="width: 100%;">
+            ${plan.id === currentPlan ? 'Piano attivo' : 'Scegli questo piano'}
+          </button>
+        `;
+        
+        card.onclick = () => selectPlan(plan.id);
+        card.onkeypress = (e) => { if (e.key === 'Enter') selectPlan(plan.id); };
+        plansContainer.appendChild(card);
+      });
+    }
+
+    function selectPlan(planId) {
+      currentPlan = planId;
+      renderPlans();
+    }
+
+    // Navigation handler
+    function switchSection(selected) {
+      [sectionDashboard, sectionSend, sectionInvestments, sectionPlans, sectionRequestCard].forEach(sec => {
+        sec.classList.add('hidden');
+      });
+      [navDashboard, navSend, navInvestments, navPlans, navRequestCard].forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      switch (selected) {
+        case 'dashboard':
+          sectionDashboard.classList.remove('hidden');
+          navDashboard.classList.add('active');
+          // Update charts when dashboard is shown
+          if (!portfolioChart) {
+            initPortfolioChart();
+          } else {
+            portfolioChart.update();
+          }
+          break;
+        case 'send':
+          sectionSend.classList.remove('hidden');
+          navSend.classList.add('active');
+          renderUserOptions(); // Re-render recipients
+          break;
+        case 'investments':
+          sectionInvestments.classList.remove('hidden');
+          navInvestments.classList.add('active');
+          renderInvestments(); // Re-render investments
+          break;
+        case 'plans':
+          sectionPlans.classList.remove('hidden');
+          navPlans.classList.add('active');
+          renderPlans(); // Re-render plans
+          break;
+        case 'requestCard':
+          sectionRequestCard.classList.remove('hidden');
+          navRequestCard.classList.add('active');
+          break;
+      }
+    }
+
+    // Event Listeners for Navigation
+    navDashboard.addEventListener('click', () => switchSection('dashboard'));
+    navSend.addEventListener('click', () => switchSection('send'));
+    navInvestments.addEventListener('click', () => switchSection('investments'));
+    navPlans.addEventListener('click', () => switchSection('plans'));
+    navRequestCard.addEventListener('click', () => switchSection('requestCard'));
+
+    // Event listener for Send Money button
+    btnSend.addEventListener('click', sendMoney);
+
+    // Event listener for Update Investments button
+    btnUpdateInvestments.addEventListener('click', updateInvestmentsValues);
+
+    // Event listener for Request Card Form submission
+    requestCardForm.addEventListener('submit', (event) => {
+      event.preventDefault(); // Prevent default form submission
+      requestError.classList.add('hidden');
+      requestSuccess.classList.add('hidden');
+
+      const fullName = document.getElementById('fullName').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const city = document.getElementById('city').value.trim();
+      const postalCode = document.getElementById('postalCode').value.trim();
+
+      if (!fullName || !address || !city || !postalCode) {
+        requestError.textContent = "Per favore, compila tutti i campi.";
+        requestError.classList.remove('hidden');
+        return;
+      }
+
+      // Simulate API call for card request
+      setTimeout(() => {
+        requestSuccess.textContent = "Richiesta della carta inviata con successo! La riceverai entro 5-7 giorni lavorativi.";
+        requestSuccess.classList.remove('hidden');
+        requestCardForm.reset(); // Clear the form
+      }, 1000);
+    });
+
+    // Initial load
+    document.addEventListener('DOMContentLoaded', () => {
+      updateCurrentDate();
+      updateUserInfo();
+      initPortfolioChart(); // Initialize dashboard chart on load
+      renderUserOptions();
+      renderTransactions();
+      renderInvestments();
+      renderPlans();
+      switchSection('dashboard'); // Ensure dashboard is visible by default
+    });
+  </script>
+</body>
+</html>
