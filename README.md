@@ -26,4 +26,4 @@ DOM manipulation without frameworks
 Chart integration for data presentation
 Form validation and interactive elements
 
-_Note: This is a self-contained demo. All data is mock/fictional and resets on refresh._
+_Note: This is a self-contained demo for educational purposes. All data is mock/fictional, resets on refresh, and was developed with instructional guidance to explore front-end development concepts._
